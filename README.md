@@ -1,9 +1,4 @@
-# Installation #
-Create a new folder called "LiquidCrystal_I2C" under the folder named "libraries" in your Arduino sketchbook folder.
-Create the folder "libraries" in case it does not exist yet. Place all the files in the "LiquidCrystal_I2C" folder.
-
-# Usage #
-To use the library in your own sketch, select it from *Sketch > Import Library*.
-
--------------------------------------------------------------------------------------------------------------------
-This library is based on work done by DFROBOT (www.dfrobot.com).
+Ultrasonic Water Level:TYPE01
+  อยู่ใยระหว่างปรับปรุง early access
+IDE:Arduino IDE 1.6.12 
+Arduino.cc ของเมกา ไม่มีปัญหาเรื่องการใช้ตัวแปลสตริง
