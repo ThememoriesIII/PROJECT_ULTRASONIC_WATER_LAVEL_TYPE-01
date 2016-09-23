@@ -155,6 +155,7 @@ else
  delay(300);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//ติดต่อกับsd-card
 void Initializing(void)
 {
   if (!SD.begin(chipSelect))
@@ -222,7 +223,7 @@ void get_date(void)
   day_data.month_of_year=b2d(Wire.read());
   day_data.year_of_all=b2d(Wire.read());
 }
-
+//รับค่าอุณหภูมิจากโมดูลเวลา
 void get_temperature(void)
 {
   //ติดต่อกับโมดูล rtc_ds3231 ผ่านการสื่อสารแบบ i2c จาก address 0x68 ของอุปกรณ์
@@ -240,7 +241,7 @@ void get_temperature(void)
   //ที่ต้องการชิปไป6bitเพื่อเลื่อนตำแหน่งของปิด เพราะ ตัวเลขอยู่bitที่ 7 กับ 6 1100000 แต่เราต้องการ 0000011
   ultrasonic_data.temp += (0.25*float(Wire.read()>>6));
 }
-
+//รับค่าจากโมดูลultrasonic
 void get_ultrasonic(void)
 {
   long duration;
@@ -265,7 +266,7 @@ void get_ultrasonic(void)
   //แปลงเป็นเมตรเนื้องจาก V ของเราสูตรเราได้ทำเป็น CM อย่างเดียวจึงต้องนำมา/100ใหม่
   ultrasonic_data.m=ultrasonic_data.cm/100;
 }
-
+//ฟังชั่นตรวจสอบตัวเลขหลักหน่วยหลัก10สำหรับแสดงผลของเวลา
 void digit_rtc_ds3231(byte dec)
 {
   //เช็คค่าตัวเลขว่ามีค่าน้อยกว่า10หรือไม่ถ้าน้อยกว่าให้ปริ้น 0 ออกมา แล้วจึงปริ้นค่าของตัวเลขอื่นๆตาม ในที่นี้ให้แสดงผลเป็นเลขฐาน10 จาก DEC
@@ -273,7 +274,7 @@ void digit_rtc_ds3231(byte dec)
   lcd.print("0");
   lcd.print(dec,DEC);
 }
-
+//ฟังชั่นตรวจสอบตัวเลขระยะทางของโมดูลultrasonicว่าเป็นหลักใดสำหรับแสดงผล
 void digit_ultrasonic(byte dec)
 {
   //เช็คค่าตัวเลขว่ามีค่าน้อยกว่า10หรือไม่ถ้าน้อยกว่าให้ปริ้น 00 ออกมา แล้วจึงปริ้นค่าของตัวเลขอื่นๆตาม ในที่นี้ให้แสดงผลเป็นเลขฐาน10 จาก DEC
@@ -297,7 +298,7 @@ void digit_ultrasonic(byte dec)
   }
    lcd.print(dec,DEC);
 }
-
+//แสดงผลเวลา
 void print_time(void)
 {
   //เรียกใช้functionge get_time เพื่อทำให้เวลาที่รับเข้ามาตรงตาม module rtc_ds_3231 มากที่สุด
@@ -311,7 +312,7 @@ void print_time(void)
   lcd.print(":");
   digit_rtc_ds3231(time_data.sec);
 }
-
+//แสดงผลวัน
 void print_date(void)
 {
   //เรียกใช้functionge get_date เพื่อทำให้วันที่รับเข้ามาตรงตาม module rtc_ds_3231 มากที่สุด
@@ -325,7 +326,7 @@ void print_date(void)
   lcd.print(":");
   digit_rtc_ds3231(day_data.year_of_all);
 }
-
+//แสดงผลอุณหภูมิ
 void print_temp(void)
 {
   //เรียกใช้functionge get_temperature เพื่อทำให้อุณหภูมิที่รับเข้ามาตรงตาม module rtc_ds_3231 มากที่สุด
@@ -334,7 +335,7 @@ void print_temp(void)
   lcd.print(ultrasonic_data.temp);
   lcd.print(":C");
 }
-
+//แสดงผลระยะทางultrasonic
 void print_ultrasonic(void)
 {
   //เรียกใช้functiongetimeเพื่อทำให้วันที่รับเข้ามาตรงตาม module rtc_ds_3231 มากที่สุด
@@ -343,7 +344,7 @@ void print_ultrasonic(void)
   digit_ultrasonic(ultrasonic_data.cm);
   lcd.print(":CM ");
 }
-
+//ฟังชั่นรีเซ็ต เฉพาะเวลา
 void reset_time(void)
 {
   Wire.beginTransmission(ds3231address);
@@ -353,7 +354,7 @@ void reset_time(void)
   Wire.write(d2b(0));
   Wire.endTransmission();
 }
-
+//ฟังชั่นรของโมดูล เฉพาะวัน
 void reset_date(void)
 {
   Wire.beginTransmission(ds3231address);
@@ -363,7 +364,7 @@ void reset_date(void)
   Wire.write(d2b(0));
   Wire.endTransmission();
 }
-
+//ฟังชั่นตั้งค่าโมดูล เฉพาะวันเวลา
 void set_time(void)
 {
   unsigned int set=1;
@@ -499,7 +500,7 @@ void set_time(void)
   Wire.endTransmission();
   lcd.noBlink();
 }
-
+//ฟังชั่นรของโมดูล เฉพาวัน
 void set_date(void)
 {
   unsigned int set=1;
@@ -635,7 +636,7 @@ void set_date(void)
   Wire.endTransmission();
   lcd.noBlink();
 }
-
+//ฟังชั่นสำหรับสั่งการให้Processorสั่งเขียนข้อมูลลงSD-CardจากLibary SD.h
 void write_sd(String water_lavel)
 {
    String nameString = String(day_data.date_of_month);
@@ -681,7 +682,7 @@ void write_sd(String water_lavel)
       Initializing();
     }
 }
-
+//ฟังชั่นแสดงสถานะการเชื่อมต่อของSD-CARDบนLCD
 void sd_print(void)
 {
   lcd.setCursor(0,1);
@@ -697,6 +698,7 @@ void sd_print(void)
     lcd.print("ON ");
   }
 }
+//ฟังชั่นสำหรับแสดงผลข้อความinter faceในการตั้งค่าโมดูลเวลา
 void setting_time(void)
 {
   lcd.clear();
